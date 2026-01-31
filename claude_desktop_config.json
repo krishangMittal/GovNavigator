@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "govnavigator": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server.server"],
+      "cwd": "C:\\Users\\Krish\\OneDrive\\Desktop\\GovNavigator",
+      "env": {
+        "PYTHONPATH": "C:\\Users\\Krish\\OneDrive\\Desktop\\GovNavigator"
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+# .gitignore - Files that Git should ignore (not track)
+# Why? Some files are: secret, auto-generated, or too big
+
+# === Secrets (NEVER commit these!) ===
+.env                    # Contains API keys
+*.pem                   # SSL certificates
+*.key                   # Private keys
+
+# === Python ===
+__pycache__/            # Python's compiled bytecode cache
+*.py[cod]               # .pyc, .pyo, .pyd files
+*.egg-info/             # Package metadata (auto-generated)
+.eggs/
+dist/                   # Built distributions
+build/                  # Build artifacts
+*.egg
+.venv/                  # Virtual environment folder
+venv/
+ENV/
+
+# === Data (often too big for Git) ===
+data/raw/               # Downloaded HTML files
+data/chromadb/          # Vector database files (can be huge!)
+*.db                    # SQLite databases
+
+# === IDE/Editor ===
+.vscode/                # VS Code settings (personal preferences)
+.idea/                  # PyCharm settings
+*.swp                   # Vim swap files
+.DS_Store               # macOS folder metadata
+
+# === Testing/Coverage ===
+.pytest_cache/
+.coverage
+htmlcov/
+
+# === Logs ===
+*.log
+logs/

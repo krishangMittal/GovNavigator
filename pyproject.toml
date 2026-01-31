@@ -1,0 +1,49 @@
+# pyproject.toml - The modern Python project configuration file
+# This replaces the old setup.py and requirements.txt approach
+# PEP 518 & PEP 621 standardized this format
+
+[project]
+# Basic project metadata
+name = "govnavigator"           # Package name (used when installing)
+version = "0.1.0"               # Semantic versioning: MAJOR.MINOR.PATCH
+description = "MCP-powered municipal code navigator - ask questions about city ordinances"
+readme = "README.md"            # Points to our readme file
+requires-python = ">=3.10"      # We need Python 3.10+ for modern features
+
+# Dependencies - packages our project needs to run
+# 100% FREE - no paid APIs needed!
+dependencies = [
+    # === MCP (Model Context Protocol) ===
+    "mcp>=1.0.0",               # Anthropic's MCP SDK - the core of our server
+
+    # === Web Scraping ===
+    "httpx>=0.27.0",            # Modern async HTTP client (better than requests)
+    "beautifulsoup4>=4.12.0",   # HTML parsing - extracts text from web pages
+    "lxml>=5.0.0",              # Fast HTML/XML parser (BeautifulSoup backend)
+    "playwright>=1.40.0",       # Browser automation - renders JavaScript!
+
+    # === Utilities ===
+    "python-dotenv>=1.0.0",     # Loads .env files for API keys
+    "rich>=13.0.0",             # Beautiful terminal output (progress bars, tables)
+    "pydantic>=2.0.0",          # Data validation - ensures our data is correct
+]
+
+# Development dependencies - only needed when developing, not in production
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",            # Testing framework
+    "ruff>=0.5.0",              # Fast Python linter (finds code issues)
+]
+
+# Entry points - makes our MCP server runnable from command line
+[project.scripts]
+govnavigator = "src.mcp_server.server:main"  # `govnavigator` command runs our server
+
+# Build system configuration
+[build-system]
+requires = ["hatchling"]        # The build tool we're using
+build-backend = "hatchling.build"
+
+# Hatch configuration (our build tool)
+[tool.hatch.build.targets.wheel]
+packages = ["src"]              # What to include in the built package

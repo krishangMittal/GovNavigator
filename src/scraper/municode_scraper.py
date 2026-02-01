@@ -187,23 +187,44 @@ class MunicodeScraper:
             if not content_text or len(content_text) < 50:
                 return None
 
-            # Extract title
-            title = ""
-            title_elem = soup.select_one("h1, .document-title, .chunk-title")
-            if title_elem:
-                title = title_elem.get_text(strip=True)
+            # === IMPROVED EXTRACTION ===
+            # Municode content often starts with "3.02 - TITLE NAME" format
+            # Let's parse section number and title from the content itself
 
-            # Extract section number (e.g., "28.04", "9.13(4)")
-            section_pattern = r"(\d+\.\d+(?:\(\d+\))?(?:\([a-z]\))?)"
             section_number = ""
+            title = ""
 
-            match = re.search(section_pattern, title)
+            # Pattern to match "3.02 - CONTINUITY OF GOVERNMENT" at start of content
+            # or "CHAPTER 28 - ZONING CODE" format
+            section_title_pattern = r'^[\s\n]*(\d+\.?\d*(?:\(\d+\))?(?:\([a-z]\))?)\s*[-\.]\s*([A-Z][A-Z\s,\-\(\)]+?)(?:\.|[\n])'
+            chapter_pattern = r'^[\s\n]*(CHAPTER\s+\d+)\s*[-\.]\s*([A-Z][A-Z\s,\-]+?)(?:\.|[\n])'
+
+            # Try section pattern first (e.g., "3.02 - CONTINUITY OF GOVERNMENT")
+            match = re.search(section_title_pattern, content_text[:500])
             if match:
                 section_number = match.group(1)
+                title = f"{section_number} - {match.group(2).strip()}"
             else:
-                match = re.search(section_pattern, content_text[:500])
+                # Try chapter pattern (e.g., "CHAPTER 28 - ZONING CODE")
+                match = re.search(chapter_pattern, content_text[:500], re.IGNORECASE)
                 if match:
                     section_number = match.group(1)
+                    title = f"{match.group(1)} - {match.group(2).strip()}"
+                else:
+                    # Fallback: just find any section number
+                    simple_pattern = r'(\d+\.\d+(?:\(\d+\))?)'
+                    match = re.search(simple_pattern, content_text[:300])
+                    if match:
+                        section_number = match.group(1)
+
+            # If still no title, try HTML elements
+            if not title:
+                title_elem = soup.select_one("h1, .document-title, .chunk-title")
+                if title_elem:
+                    title = title_elem.get_text(strip=True)
+                    # Don't use generic titles
+                    if title.lower() in ["madison, wi", "code of ordinances", ""]:
+                        title = f"Section {section_number}" if section_number else "Untitled"
 
             # Extract chapter from breadcrumb
             chapter = ""

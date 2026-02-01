@@ -452,7 +452,7 @@ def build_index_from_file(json_path: str, output_path: Optional[str] = None) -> 
 if __name__ == "__main__":
     # Build index from scraped data
     index = build_index_from_file(
-        "data/raw/madison_ordinances.json",
+        "data/raw/madison_ordinances_full.json",
         "data/processed/search_index.json"
     )
 
